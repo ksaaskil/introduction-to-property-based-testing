@@ -1,0 +1,51 @@
+/**
+ * Matrix theme for reveal.js, using black.scss as base theme.
+ * Colors from http://www.eclipsecolorthemes.org/?view=theme&id=467
+ * By Kimmo Sääskilahti.
+ */
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+// Add fonts
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700|Press+Start+2P&display=swap");
+
+// Override theme settings (see ../template/settings.scss)
+$backgroundColor: #1e1e1e;
+
+$mainColor: #d9e577;
+$headingColor: #60ff60;
+
+$mainFontSize: 2rem;
+$mainFont: "Open Sans", sans-serif;
+$headingFont: "Press Start 2P", cursive;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: uppercase;
+$headingFontWeight: 400;
+$linkColor: #00ffff;
+$linkColorHover: lighten($linkColor, 15%);
+$selectionBackgroundColor: lighten($linkColor, 25%);
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1em;
+
+section.has-light-background {
+  &,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #222;
+  }
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------

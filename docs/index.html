@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>Introduction to property-based testing</title>
+    <meta name="description" content="Introduction to property-based testing" />
+
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/reveal.css" />
+    <link rel="stylesheet" href="css/theme/matrix.css" />
+
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/monokai.css" />
+
+    <!-- Printing and PDF exports -->
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section id="welcome">
+          <header>
+            <h3>Introduction to property-based testing</h3>
+            </ul>
+          </header>
+          <p>
+            Sources:
+            <ul>
+              <li>
+                <a href="https://propertesting.com/">[1] Property-Based testing with PropEr, Erlang, and Elixir</a>
+              </li>
+              <li>
+                <a href="https://pragprog.com/book/tpp20/the-pragmatic-programmer-20th-anniversary-edition" class="href">[2] Pragmatic Programmer, 20th anniversary edition</a>
+              </li>
+          </p>
+        </section>
+        <section id="example-based-tests">
+          <h3>Example-based tests</h3>
+            <ul>
+              <li>
+                Define examples of given input and expected output
+              </li>
+              <li>
+                <u>Indirectly imply rules</u> dictating the behaviour of your code
+              </li>
+            </ul>
+              <pre>
+                <code class="language-python">
+def test_myfunction():
+  input = 1
+  output = myfunction(input)
+  assert output == 2
+                </code>
+              </pre>
+        </section>
+        <section id="property-based-tests">
+          <h3>Property-based tests</h3>
+              Property-based testing (PBT) asks you to <u>come up with the rules first</u> and them tests them for you
+              <pre>
+                <code class="language-python">
+from hypothesis import given
+import hypothesis.strategies as some
+
+@given(integer=some.integer())
+def test_myfunction(integer):
+  assert my_function(integer) == integer + 1
+                </code>
+              </pre>
+        </section>
+        <section id="why">
+          <h3>Why property-based tests?</h3>
+          <ul>
+            <li>Exhaustively comb through your code</li>
+            <li>Write more declarative tests instead of hard-coded examples</li>
+            <li>Verify assumptions</li>
+            <li>Test behaviour you could have never imagined</li>
+          </ul>
+        </section>
+        <section id="examples">
+          <h3>
+            Examples
+          </h3>
+          <ul>
+            <li>
+              T. Arts found 25 important bugs from Project FIFO
+              <ul>
+                <li>460 lines of test code</li>
+                <li>Covered 60 000 lines of code</li>
+                <li>Timing errors, race conditions, type errors, errors in documentation,...</li>
+              </ul>
+              <li>
+                J. W. Norton found sequences of 17 and 31 specific calls that could corrupt databases in Google's levelDB
+              </li>
+            </li>
+          </ul>
+        </section>
+        <section id="why-not">
+          <h3>
+            Why not PBT?
+          </h3>
+          <ul>
+            <li>Property-based tests do not replace example-based tests</li>
+            <li>Example-based tests good for
+              <ul>
+                <li>
+                  Regression tests
+                </li>
+                <li>
+                  Transparent examples
+                </li>
+              </ul>
+            </li>
+            <li>Coming up with good properties can be really hard</li>
+          </ul>
+        </section>
+        <section id="concepts">
+          <h3>Basic concepts</h3>
+          <ul>
+            <li>Properties</li>
+            <li>Generators</li>
+            <li></li>
+          </ul>
+        </section>
+        
+        <section id="acknowledgements">
+          <h3>Acknowledgements</h3>
+          <ul>
+            <li>
+              Slides created with
+              <a href="https://revealjs.com/#/">Reveal.js</a>
+            </li>
+            <li>
+              Color theme cloned from
+              <a href="http://www.eclipsecolorthemes.org/?view=theme&id=467"
+                >Matrix</a
+              >
+            </li>
+          </ul>
+        </section>
+        <section id="thanks">
+          <h2>Thanks for visiting!</h2>
+        </section>
+      </div>
+    </div>
+
+    <script src="js/reveal.js"></script>
+
+    <script>
+      // More info about config & dependencies:
+      // - https://github.com/hakimel/reveal.js#configuration
+      // - https://github.com/hakimel/reveal.js#dependencies
+      Reveal.initialize({
+        hash: true,
+        transition: "none",
+        dependencies: [
+          { src: "plugin/markdown/marked.js" },
+          { src: "plugin/markdown/markdown.js" },
+          { src: "plugin/notes/notes.js", async: true },
+          { src: "plugin/highlight/highlight.js", async: true },
+
+          // Zoom in and out with Alt+click
+          { src: "plugin/zoom-js/zoom.js", async: true },
+        ],
+      });
+    </script>
+  </body>
+</html>
