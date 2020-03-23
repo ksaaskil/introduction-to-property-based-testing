@@ -150,31 +150,16 @@ def test_myfunction(integer):
           <h3>Coming up with properties</h3>
           <ul>
             <li>
-              <u>Modeling</u>
-              <ul>
-                <li>
-                  "My function should behave similarly as the inefficient but obviously correct model"
-                </li>
-              </ul>
+              Modeling
             </li>
             <li>
-              <u>Invariants</u>
-              <ul>
-                <li>
-                  "My function should not change the length of a list"
-                </li>
-              </ul>
+              Invariants
             </li>
             <li>
-              <u>Symmetries</u>
-              <ul>
-                <li>
-                  "Chaining encode and decode should be no-op"
-                </li>
-              </ul>
+              Symmetries
             </li>
             <li>
-              <u>Generalize example-based tests</u>
+              Generalize example-based tests
               <ul>
                 <li>
                   Replace hard-coded input values with generators
@@ -182,6 +167,62 @@ def test_myfunction(integer):
               </ul>
             </li>
           </ul>
+        </section>
+
+        <section id="property-modeling">
+          <h3>
+            Modeling
+          </h3>
+
+          <pre>
+            <code class="language-elixir">
+property "finds biggest element" do
+  forall x <- non_empty(list(integer())) do
+    MyModule.biggest(x) == model_biggest(x)
+  end
+end
+
+def model_biggest(x) do
+  List.last(Enum.sort(list))
+end
+            </code>
+          </pre>
+
+        </section>
+
+        <section id="property-symmetric">
+          <h3>
+            Symmetry
+          </h3>
+
+          <pre>
+            <code class="language-elixir">
+property "symmetric encoding/decoding" do
+  forall data <- list({atom(), any()}) do
+    encoded = encode(data)
+    is_binary(encoded) and data == decode(encoded)
+  end
+end
+            </code>
+          </pre>
+
+        </section>
+
+        <section id="property-invariant">
+          <h3>
+            Invariance
+          </h3>
+
+          <pre>
+            <code class="language-elixir">
+property "a sorted list keeps its size" do
+  forall l <- list(number()) do
+    length(l) == length(MyModule.sort(l))
+  end
+end
+            </code>
+          </pre>
+
         </section>
         
         <section id="acknowledgements">
