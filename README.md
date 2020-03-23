@@ -6,7 +6,7 @@ See the slides at [https://ksaaskil.github.io/introduction-to-property-based-tes
 
 Examples in [Elixir](https://elixir-lang.org/) reside in [elixir-propcheck/](./elixir-propheck) folder.
 
-The project was initialized with
+The project was initialized using [`mix`](https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html):
 
 ```bash
 $ mix new elixir-propcheck --app pbt
