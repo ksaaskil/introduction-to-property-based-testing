@@ -1,21 +1,32 @@
 # Pbt
 
-**TODO: Add description**
+Example of property-based tests in Elixir.
 
-## Installation
+## Instructions
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `pbt` to your list of dependencies in `mix.exs`:
+Install dependencies:
 
-```elixir
-def deps do
-  [
-    {:pbt, "~> 0.1.0"}
-  ]
-end
+```bash
+$ mix deps.get
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/pbt](https://hexdocs.pm/pbt).
+Run tests:
 
+```bash
+$ mix test
+```
+
+Access shell (in Unix-style systems):
+
+```bash
+$ MIX_ENV="test" iex -S mix
+```
+
+If you're using Windows, you need to set `MIX_ENV` to your environment somehow differently :)
+
+Example calls in the shell:
+
+```bash
+iex> :proper_types.term()
+iex> :proper_gen.pick(:proper_types.number())
+```
