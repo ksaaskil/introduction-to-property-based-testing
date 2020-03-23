@@ -29,4 +29,12 @@ Example calls in the shell:
 ```bash
 iex> :proper_types.term()
 iex> :proper_gen.pick(:proper_types.number())
+iex> :proper_gen.pick(:proper_types.atom())
+iex> :proper_gen.pick(:proper_types.binary())
+iex> :proper_gen.pick(:proper_types.boolean())
+iex> :proper_gen.pick(:proper_types.choose(1, 10))
+iex> :proper_gen.pick(:proper_types.list(:proper_types.integer()))
+# Return character code points
+iex> :proper_gen.pick(:proper_types.string())
+iex> :proper_gen.pick({:proper_types.boolean(), :proper_types.number()})
 ```
