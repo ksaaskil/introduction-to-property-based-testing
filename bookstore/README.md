@@ -1,21 +1,12 @@
 # Bookstore
 
-**TODO: Add description**
+Example app for stateful PBT from the [PropEr testing book](https://propertesting.com/).
 
-## Installation
+## Instructions
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bookstore` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:bookstore, "~> 0.1.0"}
-  ]
-end
+```bash
+$ docker-compose up -d
+$ mix deps.get
+$ mix escript.build
+$ ./bookstore
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/bookstore](https://hexdocs.pm/bookstore).
-
