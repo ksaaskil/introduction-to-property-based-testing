@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  postgres:
+    container_name: postgres
+    image: circleci/postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: kimmo
+      POSTGRES_DB: bookstore_db
+      POSTGRES_PASSWORD: password
