@@ -508,6 +508,36 @@ end
 <img src="/images/execution-real.png"  height="200" width="500">
         </section>
 
+        <section id="pattern-matching" data-markdown>
+          <textarea data-template>
+#### Pattern matching FTW
+Pattern matching makes preconditions, postconditions, and state transitions more succint and readable
+<pre>
+  <code class="language-elixir">
+def precondition(state, {:call, _, :borrow_copy_avail, [isbn]}) do
+  0 < elem(Map.get(s, isbn), 4)
+end
+
+def precondition(state, {:call, _, :borrow_copy_unavail, [isbn]}) do
+  0 == elem(Map.get(s, isbn), 4)
+end
+
+def precondition(state, {:call, _, :return_copy_full, [isbn]}) do
+  {_, _, _, owned, avail} = Map.get(s, isbn)
+  owned == avail
+end
+
+def precondition(state, {:call, _, :return_copy_existing, [isbn]}) do
+  {_, _, _, owned, avail} = Map.get(s, isbn)
+  owned != avail
+end
+
+# ...and so on
+  </code>
+</pre>
+          </textarea>
+        </section>
+
         <section id="resources">
           <h3>
             Resources
