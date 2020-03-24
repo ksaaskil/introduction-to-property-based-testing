@@ -4,6 +4,7 @@ defmodule BookstoreTest do
   use PropCheck.StateM
   doctest Bookstore
 
+  # Generators
   def title() do
     let s <- utf8() do
       elements([s, String.to_charlist(s)])
@@ -35,15 +36,7 @@ defmodule BookstoreTest do
     elements(for {_, title, _, _, _} <- Map.values(s), do: partial(title))
   end
 
-  def partial(string) do
-    string = IO.chardata_to_string(string)
-    l = String.length(string)
-
-    let {start, len} <- {range(0, l), non_neg_integer()} do
-      String.slice(string, start, len)
-    end
-  end
-
+  # Properties
   property "bookstore stateful ops", [:verbose] do
     forall cmds <- commands(__MODULE__) do
       {:ok, apps} = Application.ensure_all_started(:bookstore)
@@ -64,8 +57,10 @@ defmodule BookstoreTest do
     end
   end
 
+  # Initial state
   def initial_state(), do: %{}
 
+  # Commands
   def command(state) do
     always_possible = [
       {:call, BookShim, :add_book_new, [isbn(), title(), author(), 1, 1]},
@@ -89,6 +84,39 @@ defmodule BookstoreTest do
     oneof(always_possible ++ relies_on_state)
   end
 
+  # Preconditions
+  def precondition(s, {:call, _, :add_book_new, [isbn | _]}) do
+    not has_isbn(s, isbn)
+  end
+
+  def precondition(s, {:call, _, :find_book_by_title_unknown, [title]}) do
+    not has_isbn(s, title)
+  end
+
+  def precondition(s, {:call, _, :find_book_by_title_matching, [title]}) do
+    like_title(s, title)
+  end
+
+  def precondition(s, {:call, _, _, [isbn | _]}) do
+    has_isbn(s, isbn)
+  end
+
+  # Postconditions
+  def postcondition(_state, {:call, _mod, _fun, _args}, _res) do
+    true
+  end
+
+  # State changes
+  def next_state(state, _, {:call, :add_book_new, [isbn, title, author, owned, avail]}) do
+    Map.put(state, isbn, {isbn, title, author, owned, avail})
+  end
+
+  def next_state(state, _res, {:call, _, _, _}) do
+    new_state = state
+    new_state
+  end
+
+  # Helpers
   def has_isbn(s, isbn) do
     Map.has_key?(s, isbn)
   end
@@ -106,32 +134,12 @@ defmodule BookstoreTest do
     String.contains?(string, pattern)
   end
 
-  def precondition(s, {:call, _, :add_book_new, [isbn | _]}) do
-    not has_isbn(s, isbn)
-  end
+  def partial(string) do
+    string = IO.chardata_to_string(string)
+    l = String.length(string)
 
-  def precondition(s, {:call, _, :find_book_by_title_unknown, [title]}) do
-    not has_isbn(s, title)
-  end
-
-  def precondition(s, {:call, _, :find_book_by_title_matching, [title]}) do
-    like_title(s, title)
-  end
-
-  def precondition(s, {:call, _, _, [isbn | _]}) do
-    has_isbn(s, isbn)
-  end
-
-  def postcondition(_state, {:call, _mod, _fun, _args}, _res) do
-    true
-  end
-
-  def next_state(state, _, {:call, :add_book_new, [isbn, title, author, owned, avail]}) do
-    Map.put(state, isbn, {isbn, title, author, owned, avail})
-  end
-
-  def next_state(state, _res, {:call, _, _, _}) do
-    new_state = state
-    new_state
+    let {start, len} <- {range(0, l), non_neg_integer()} do
+      String.slice(string, start, len)
+    end
   end
 end
