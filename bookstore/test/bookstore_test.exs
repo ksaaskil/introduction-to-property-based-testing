@@ -70,8 +70,4 @@ defmodule BookstoreTest do
     new_state = state
     new_state
   end
-
-  test "greets the world" do
-    assert Bookstore.hello() == :world
-  end
 end
