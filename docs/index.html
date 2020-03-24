@@ -323,6 +323,191 @@ end
           </a>
         </section>
 
+        <section id="stateful-intro" data-markdown>
+          <textarea data-template>
+### Stateful properties
+
+- Most of the amazing stories of property-based testing involve large and complex *stateful* systems
+- Particularly useful when what the user sees is simple but the underlying system is complex
+			</textarea
+          >
+        </section>
+
+        <section id="stateful-2" data-markdown>
+          <textarea data-template>
+### Testing stateful properties
+
+  1. Define a **model** for how your system behaves
+  1. Let PBT framework generate series of **commands** representing operations on the system
+  1. Run the commands on **both the model and the system**
+  1. Check that the **system output agrees with the model's output**
+			</textarea
+          >
+        </section>
+
+        <section id="model" data-markdown>
+          <textarea data-template>
+### Model
+
+- Simple, straightforward, abstract version of what the actual system should be doing
+- Made of two parts:
+  1. A data structure representing the **state** of the system
+    - Dictionary, list, etc.
+  1. Function that transforms the model state based on commands applied to the system (*next_state*)
+
+<pre>
+  <code class="language-python">
+    def next_state(state: State, res: Result, operation: Operation) -> State:
+      # Update model state
+      new_state = ...
+      return new_state
+  </code>
+</pre>
+          </textarea>
+        </section>
+
+        <section id="stateful-example" data-markdown>
+          <textarea data-template>
+### Commands
+
+1. A list of potential symbolic calls with generators for arguments
+1. A series of **preconditions** defining whether a given call would make sense according to the current *model* state
+
+<pre>
+  <code class="language-elixir">
+# Possible commands based on current state
+def command(_state) do
+  oneof([
+    {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
+    {:call, Bookstore.DB, :add_copy, [isbn()]},
+    {:call, Bookstore.DB, :query_existing_book, [isbn()]}
+  ])
+end
+
+# Whether a command is valid under the current state
+def precondition(state, {:call, _mod, _fun, _args}) do
+  # Some logic how to only allow "query_existing_book" if the book is in model state...
+  true
+end
+  </code>
+</pre>
+
+          </textarea>
+        </section>
+
+        <section id="postconditions" data-markdown>
+          <textarea data-template>
+### Postconditions
+
+- Used for checking that things are right when **validating actual system**
+- Not included in the model
+- Either check for
+  - invariants that should always hold true
+  - agreement between expected output based on model and the actual system output
+
+<pre>
+  <code class="language-elixir">
+# Given the state before the call, did the result from the *actual system* make sense
+def postcondition(state, {:call, _mod, _fun, _args}, _res) do
+  true
+end
+  </code>
+</pre>
+
+          </textarea>
+        </section>
+
+        <section id="stateful-summary" data-markdown>
+          <textarea data-template>
+#### Summary of stateful PBT
+Requirements:
+
+- **Model** comprised of some data (state) that gets modified by *next_state* function
+- **Commands** representing operations that can be applied, constrained with *preconditions*
+- **Postconditions** ensuring that the results from the actual system match what we expect *based on the model*
+          </textarea>
+        </section>
+
+        <section id="stateful-example" data-markdown>
+          <textarea data-template>
+#### Putting it all together
+<pre>
+  <code class="language-elixir">
+# Initial model value
+def initial_state(), do: %{}
+
+# Possible commands based on current state
+def command(_state) do
+  oneof([
+    {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
+    {:call, Bookstore.DB, :add_copy, [isbn()]}
+  ])
+end
+
+# Whether a command is valid under the current state
+def precondition(state, {:call, _mod, _fun, _args}) do
+  true
+end
+
+# Given the state before the call, did the result from the *actual system* make sense
+def postcondition(state, {:call, _mod, _fun, _args}, _res) do
+  true
+end
+
+# Update the model state for the test to proceed
+def next_state(state, _res, {:call, _mod, _fun, _args}) do
+  new_state = state
+  new_state
+end
+
+  </code>
+</pre>
+          </textarea>
+        </section>
+
+        <section id="execution">
+<h3>Stateful test execution</h3>
+<ul>
+  <li>
+    PropEr divides execution of stateful tests into <b>abstract and real phases</b>
+  </li>
+  <li>
+    Abstract phase
+    <ul>
+      <li>
+        <b>is only based on the model</b>: it lacks postconditions or actual calls to the system
+      </li>
+      <li>
+        defines the sequences of commands run in the real execution phase
+      </li>
+    </ul>
+  </li>
+  
+  <li>
+    Illustration from [1]:
+  </li>
+</ul>
+<img src="/images/stateful-abstract.png"  height="200" width="500">
+          </textarea>
+          
+        </section>
+
+        <section id="execution-real">
+          <h3>Real execution phase</h3>
+<ul>
+  <li>
+    Apply the commands from the abstract execution phase to the real system
+  </li>
+  <li>
+    Also check postconditions as well as preconditions
+  </li>
+  <li>
+    <b>Important: model defines tried sequences of operations, the actual system never drives the test</b>
+  </li>
+</ul>
+<img src="/images/execution-real.png"  height="200" width="500">
+        </section>
+
         <section id="resources">
           <h3>
             Resources
