@@ -126,7 +126,11 @@ defmodule BookstoreTest do
     true
   end
 
-  def next_state(state, _res, {:call, _mod, _fun, _args}) do
+  def next_state(state, _, {:call, :add_book_new, [isbn, title, author, owned, avail]}) do
+    Map.put(state, isbn, {isbn, title, author, owned, avail})
+  end
+
+  def next_state(state, _res, {:call, _, _, _}) do
     new_state = state
     new_state
   end
