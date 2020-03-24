@@ -245,14 +245,14 @@ end
               Generators generate test data
             <ul>
               <li>
-                Integers, booleans, lists, objects, <b>symbolic calls</b>, HTTP requests...
+                Integers, lists, objects, one-of, symbolic calls, HTTP requests...
               </li>
             </ul>
             </li>
             <li>
               Generators are <b>composable</b>
               <ul>
-                <li>Lists of integers, map with strings, symbolic calls with random arguments</li>
+                <li>Lists of integers, map with strings, symbolic calls with integer arguments</li>
               </ul>
             </li>
             <li>
@@ -268,7 +268,13 @@ end
         <section id="fancy-generators">
           <h3>Fancy generators</h3>
           <ul>
-            <li><a href="https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation" class="href">Targeted example generation</a></li>
+            <li><a href="http://proper.softlab.ntua.gr/papers/icst2018.pdf" class="href">Targeted example generation</a>
+              <ul>
+                <li>
+                  <a href="https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation" class="href">hypothesis.target</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.TargetedPBT.html#content" class="href">PropCheck.TargetedPBT</a>
+                </li>
+              </ul>
+            </li>
             <li>
               Genetic algorithms
             </li>
