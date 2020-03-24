@@ -157,7 +157,7 @@ def test_my_sort(l):
           <ul>
             <li>Properties</li>
             <li>Generators</li>
-            <li>Shrinking</li>
+            <li>Shrinking (not discussed)</li>
           </ul>
         </section>
 
@@ -237,6 +237,41 @@ property "a sorted list keeps its size" do
 end
             </code>
           </pre>
+        </section>
+        <section id="generators">
+          <h3>Generators</h3>
+          <ul>
+            <li>
+              Generators generate test data
+            <ul>
+              <li>
+                Integers, booleans, lists, objects, <b>symbolic calls</b>, HTTP requests...
+              </li>
+            </ul>
+            </li>
+            <li>
+              Generators are <b>composable</b>
+              <ul>
+                <li>Lists of integers, map with strings, symbolic calls with random arguments</li>
+              </ul>
+            </li>
+            <li>
+              Generators can be <b>resized</b>, <b>transformed</b>, and <b>restricted</b>
+                <ul>
+                  <li>Lists with more than one million values</li>
+                  <li>List of HTTP requests where POST requests always precede GET requests</li>
+                  <li>Only non-leap-day dates</li>
+                </ul>
+            </li>
+          </ul>
+        </section>
+        <section id="statistics">
+          <h3>Generator statistics</h3>
+          <ul>
+            <li>
+              Very important to understand what is (not) being tested
+            </li>
+          </ul>
         </section>
         <section id="demo">
           <h3>

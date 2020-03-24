@@ -1,4 +1,4 @@
-from hypothesis import given
+from hypothesis import given, event
 import hypothesis.strategies as some
 
 
@@ -66,6 +66,7 @@ def test_look_tuples_work_too(t):
 def my_sort(l):
     return sorted(l)
 
+
 # Example-based test
 
 
@@ -80,5 +81,13 @@ def test_my_sort(l):
     l_sorted = my_sort(l)
     assert len(l_sorted) == len(l)
     assert set(l_sorted) == set(l)
+
+    def length_to_range(n):
+        base = 5
+        div = n // base
+        return div * base, (div + 1) * base
+
+    length_range = length_to_range(len(l))
+    event("length in range {}-{}".format(*length_range))
     for i in range(len(l) - 1):
-        assert l_sorted[i] <= l_sorted[i+1]
+        assert l_sorted[i] <= l_sorted[i + 1]
