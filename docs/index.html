@@ -50,10 +50,10 @@
             </ul>
               <pre>
                 <code class="language-python">
-def test_myfunction():
-  input = 1
-  output = myfunction(input)
-  assert output == 2
+def test_mysort():
+  l = [5, 3, 2, 1, 6]
+  l_sorted = my_sort(l)
+  assert l_sorted == [1, 2, 3, 5, 6]
                 </code>
               </pre>
         </section>
@@ -65,9 +65,13 @@ def test_myfunction():
 from hypothesis import given
 import hypothesis.strategies as some
 
-@given(integer=some.integer())
-def test_myfunction(integer):
-  assert my_function(integer) == integer + 1
+@given(l=some.lists(some.integers()))
+def test_my_sort(l):
+    l_sorted = my_sort(l)
+    assert len(l_sorted) == len(l)
+    assert set(l_sorted) == set(l)
+    for i in range(len(l) - 1):
+        assert l_sorted[i] <= l_sorted[i+1]        
                 </code>
               </pre>
         </section>
@@ -131,12 +135,20 @@ def test_myfunction(integer):
             </li>
             <li>
               <a href="https://hypothesis.readthedocs.io/en/latest/" class="href">Hypothesis</a> (Python)
+              <ul>
+                <li>
+                  Includes <a href="https://hypothesis.readthedocs.io/en/latest/numpy.html" class="href">NumPy and Pandas</a> tools!
+                </li>
+              </ul>
             </li>
             <li>
               <a href="https://proper-testing.github.io/" class="href">PropEr</a> (Erlang)
             </li>
             <li>
               <a href="https://github.com/alfert/propcheck" class="href">PropCheck</a> (Elixir)
+            </li>
+            <li>
+              <a href="https://fscheck.github.io/FsCheck/" class="href">FsCheck</a> (.NET)
             </li>
           </ul>
         </section>
