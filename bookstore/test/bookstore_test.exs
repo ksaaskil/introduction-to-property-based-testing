@@ -29,6 +29,21 @@ defmodule BookstoreTest do
     end
   end
 
+  def isbn(state), do: elements(Map.keys(state))
+
+  def title(s) do
+    elements(for {_, title, _, _, _} <- Map.values(s), do: partial(title))
+  end
+
+  def partial(string) do
+    string = IO.chardata_to_string(string)
+    l = String.length(string)
+
+    let {start, len} <- {range(0, l), non_neg_integer()} do
+      String.slice(string, start, len)
+    end
+  end
+
   property "bookstore stateful ops", [:verbose] do
     forall cmds <- commands(__MODULE__) do
       {:ok, apps} = Application.ensure_all_started(:bookstore)
@@ -51,11 +66,27 @@ defmodule BookstoreTest do
 
   def initial_state(), do: %{}
 
-  def command(_state) do
-    oneof([
-      {:call, Bookstore.DB, :add_book, [isbn(), title(), author(), 1, 1]},
-      {:call, Bookstore.DB, :find_book_by_title, [title()]}
-    ])
+  def command(state) do
+    always_possible = [
+      {:call, BookShim, :add_book_new, [isbn(), title(), author(), 1, 1]},
+      {:call, BookShim, :find_book_by_title_unknown, [title()]}
+    ]
+
+    relies_on_state =
+      case Map.equal?(state, %{}) do
+        true ->
+          []
+
+        false ->
+          s = state
+
+          [
+            {:call, BookShim, :add_book_existing, [isbn(s), title(), author(), 1, 1]},
+            {:call, BookShim, :find_book_by_title_matching, [title(s)]}
+          ]
+      end
+
+    oneof(always_possible ++ relies_on_state)
   end
 
   def precondition(_state, {:call, _mod, _fun, _args}) do
