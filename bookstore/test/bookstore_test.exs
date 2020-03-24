@@ -90,7 +90,7 @@ defmodule BookstoreTest do
   end
 
   def precondition(s, {:call, _, :find_book_by_title_unknown, [title]}) do
-    not has_isbn(s, title)
+    not like_title(s, title)
   end
 
   def precondition(s, {:call, _, :find_book_by_title_matching, [title]}) do
@@ -102,8 +102,36 @@ defmodule BookstoreTest do
   end
 
   # Postconditions
-  def postcondition(_state, {:call, _mod, _fun, _args}, _res) do
+  def postcondition(state, {_, _, :add_book_new, _}, ok) do
     true
+  end
+
+  def postcondition(state, {_, _, :add_book_existing, _}, {error, _}) do
+    true
+  end
+
+  def postcondition(state, {_, _, :find_book_by_title_matching, [title]}, {:ok, res}) do
+    map =
+      :maps.filter(
+        fn _, {_, t, _, _, _} -> contains?(t, title) end,
+        state
+      )
+
+    Enum.sort(res) == Enum.sort(Map.values(map))
+    true
+  end
+
+  def postcondition(state, {_, _, :find_book_by_title_unknown, _}, {:ok, []}) do
+    true
+  end
+
+  def postcondition(_state, {:call, mod, fun, args}, res) do
+    mod = inspect(mod)
+    fun = inspect(fun)
+    args = inspect(args)
+    res = inspect(res)
+    IO.puts("\nnon-matching postcondition: {#{mod}, #{fun}, #{args}} -> #{res}")
+    false
   end
 
   # State changes
