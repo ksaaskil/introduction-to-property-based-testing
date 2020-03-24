@@ -88,6 +88,6 @@ def test_my_sort(l):
         return div * base, (div + 1) * base
 
     length_range = length_to_range(len(l))
-    event("length in range {}-{}".format(*length_range))
+    event("input list length in range {}-{}".format(*length_range))
     for i in range(len(l) - 1):
         assert l_sorted[i] <= l_sorted[i + 1]

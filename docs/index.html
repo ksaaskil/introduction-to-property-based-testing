@@ -270,8 +270,25 @@ end
           <ul>
             <li>
               Very important to understand what is (not) being tested
+              <ul>
+            <li>
+              <a href="https://hexdocs.pm/propcheck/PropCheck.html#collect/2">collect</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.html#aggregate/2" class="href">aggregate</a>, <a href="https://hexdocs.pm/propcheck/PropCheck.html#measure/3" class="href">measure</a> in PropCheck
             </li>
+              </ul>
+              <li>Example output from <a href="https://hypothesis.readthedocs.io/en/latest/details.html#hypothesis.event">hypothesis.event</a>:
+                <pre>
+            <code>
+  - Events:
+    *  63.37%, input list length in range 0-5
+    *  27.72%, input list length in range 5-10
+    *   3.96%, input list length in range 10-15
+    *   2.97%, input list length in range 15-20
+    *   0.99%, input list length in range 35-40
+            </code>
+          </pre>
+              </li>
           </ul>
+          
         </section>
         <section id="demo">
           <h3>
