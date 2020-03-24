@@ -89,8 +89,37 @@ defmodule BookstoreTest do
     oneof(always_possible ++ relies_on_state)
   end
 
-  def precondition(_state, {:call, _mod, _fun, _args}) do
-    true
+  def has_isbn(s, isbn) do
+    Map.has_key?(s, isbn)
+  end
+
+  def like_title(map, title) do
+    Enum.any?(
+      Map.values(map),
+      fn {_, t, _, _, _} -> contains?(t, title) end
+    )
+  end
+
+  def contains?(str_or_chars_full, str_or_char_pattern) do
+    string = IO.chardata_to_string(str_or_chars_full)
+    pattern = IO.chardata_to_string(str_or_char_pattern)
+    String.contains?(string, pattern)
+  end
+
+  def precondition(s, {:call, _, :add_book_new, [isbn | _]}) do
+    not has_isbn(s, isbn)
+  end
+
+  def precondition(s, {:call, _, :find_book_by_title_unknown, [title]}) do
+    not has_isbn(s, title)
+  end
+
+  def precondition(s, {:call, _, :find_book_by_title_matching, [title]}) do
+    like_title(s, title)
+  end
+
+  def precondition(s, {:call, _, _, [isbn | _]}) do
+    has_isbn(s, isbn)
   end
 
   def postcondition(_state, {:call, _mod, _fun, _args}, _res) do
