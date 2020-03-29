@@ -4,8 +4,10 @@ Example app for stateful PBT from the [PropEr testing book](https://propertestin
 
 ## Instructions
 
+Install [Elixir](https://elixir-lang.org/install.html).
+
 ```bash
-$ docker-compose up -d
+$ docker-compose up -d  # Postgres
 $ mix deps.get
 $ mix escript.build
 $ ./bookstore  # Initialize database
