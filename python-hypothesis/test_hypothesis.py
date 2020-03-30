@@ -87,3 +87,22 @@ def test_my_sort(l):
     event("input list length in range {}-{}".format(*length_range))
     for i in range(len(l) - 1):
         assert l_sorted[i] <= l_sorted[i + 1]
+
+# Use `data` if your generated data depends on the execution of your tests
+# If you need values that are affected by previous draws but which don’t depend on the execution of your test,
+# stick to the simpler @composite.
+@given(some.data())
+def test_draw_sequentially(data):
+    x = data.draw(some.integers(), label="First number")
+    y = data.draw(some.integers(min_value=x), label="Second number")
+    assert x <= y
+
+
+#The @composite decorator lets you combine other strategies in more or less arbitrary ways. It’s probably the main thing you’ll want to use for complicated custom strategies.
+# draw(s) is a function that should be thought of as returning s.example(), except that the result is reproducible and will minimize correctly. The decorated function has the initial argument removed from the list, but will accept all the others in the expected order.
+# Get an example via: `list_and_index.example()`.
+@some.composite
+def list_and_index(draw, elements=some.integers()):
+    xs = draw(some.lists(elements, min_size=1))
+    i = draw(some.integers(min_value=0, max_value=len(xs)-1))
+    return (xs, i)
