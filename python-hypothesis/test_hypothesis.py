@@ -1,7 +1,25 @@
 from hypothesis import given, event
 import hypothesis.strategies as some
 
+# Define input data by specifiyng strategies in the `@given` block
+@given(some.integers(), some.integers())
+def test_ints_are_commutative(x, y):
+    assert x + y == y + x
 
+# You can also name the variables with keywords
+@given(x=some.integers(), y=some.integers())
+def test_ints_cancel(x, y):
+    assert (x + y) - y == x
+
+# An example of a symmetric property
+@given(some.lists(some.integers()))
+def test_reversing_twice_gives_same_list(xs):
+    ys = list(xs)
+    ys.reverse()
+    ys.reverse()
+    assert xs == ys
+
+# Another example of a symmetric property for encoding and decoding
 def encode(input_string):
     if not input_string:
         return []
@@ -28,54 +46,30 @@ def decode(lst):
         q += character * count
     return q
 
-
 @given(some.text())
 def test_decode_inverts_encode(s):
     assert decode(encode(s)) == s
 
-
-@given(some.integers(), some.integers())
-def test_ints_are_commutative(x, y):
-    assert x + y == y + x
-
-
-@given(x=some.integers(), y=some.integers())
-def test_ints_cancel(x, y):
-    assert (x + y) - y == x
-
-
-@given(some.lists(some.integers()))
-def test_reversing_twice_gives_same_list(xs):
-    # This will generate lists of arbitrary length (usually between 0 and
-    # 100 elements) whose elements are integers.
-    ys = list(xs)
-    ys.reverse()
-    ys.reverse()
-    assert xs == ys
-
-
+# One can compose generators to generate e.g. tuples of booleans and text
 @given(some.tuples(some.booleans(), some.text()))
 def test_look_tuples_work_too(t):
-    # A tuple is generated as the one you provided, with the corresponding
-    # types in those positions.
     assert len(t) == 2
     assert isinstance(t[0], bool)
     assert isinstance(t[1], str)
 
 
+
+# Simple sort function for an example-based test
 def my_sort(l):
     return sorted(l)
 
-
-# Example-based test
-
-
+# Regular example-based unit test
 def test_mysort():
     l = [5, 3, 2, 1, 6]
     l_sorted = my_sort(l)
     assert l_sorted == [1, 2, 3, 5, 6]
 
-
+# Property-based test for sorting function
 @given(l=some.lists(some.integers()))
 def test_my_sort(l):
     l_sorted = my_sort(l)
@@ -88,6 +82,8 @@ def test_my_sort(l):
         return div * base, (div + 1) * base
 
     length_range = length_to_range(len(l))
+    # Use `event` to collect statistics, a very important feature
+    # to understand what data you're generating
     event("input list length in range {}-{}".format(*length_range))
     for i in range(len(l) - 1):
         assert l_sorted[i] <= l_sorted[i + 1]
