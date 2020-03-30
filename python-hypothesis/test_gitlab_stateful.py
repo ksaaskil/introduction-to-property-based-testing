@@ -9,11 +9,13 @@ from typing import Optional
 
 @dataclass
 class User:
+    """User data structure."""
     uid: str
     name: str
 
 @composite
 def users(draw):
+    """Strategy for generating users."""
     uid = draw(st.uuids())
     name = draw(st.text())
     return User(uid=str(uid), name=name)
@@ -21,8 +23,11 @@ def users(draw):
 class GitlabException(Exception):
     pass
 
-# Fake shim, should be replaced by actual system calls
-class GitlabShim:
+class GitlabAPI:
+    """Fake GitLab API, does not perform network calls.
+    This is *NOT* the model, everything here should be replaced
+    by actual system calls.
+    """
     def __init__(self):
         self._state = {}
 
@@ -62,17 +67,20 @@ class GitlabStateful(RuleBasedStateMachine):
         super().__init__()
         self._model_state = {}
 
-        self._shim = GitlabShim()
-        self._shim.prepare()
+        self._gitlab = GitlabAPI()
+        self._gitlab.prepare()
 
     created_users = Bundle("users")
 
-    # Create new user
-    # TODO: Should this check to not accidentally create the same user as before?
     @rule(target=created_users, user=users())
     def create_new_user(self, user: User):
+        """Create new user from generated user.
+
+        TODO: Should this check to not accidentally create the same user as before?
+        """
+
         # Perform operation on real system
-        self._shim.create_user(user)
+        self._gitlab.create_user(user)
 
         # Update model state (`next_state`)
         self._model_state.update(**{user.uid: user})
@@ -80,18 +88,19 @@ class GitlabStateful(RuleBasedStateMachine):
         # Return value store it into bundle
         return user
 
-    # Test adding an existing user, should raise an exception.
-    # User is drawn from the `created_users` bundle.
     @rule(user=created_users)
     @expect_exception(GitlabException)
     def create_existing_user(self, user: User):
-        self._shim.create_user(user)
+        """Test creating an existing user, should raise an exception.
+        User is drawn from the `created_users` bundle, guaranteeing it has been created.
+        """
+        self._gitlab.create_user(user)
 
-    # Test fetching an existing user, as post-condition both model and state
-    # should return the same user
     @rule(user=created_users)
     def get_existing_user(self, user: User):
-        fetched_user = self._shim.fetch_user(user.uid)
+        """Test fetching an existing user, as post-condition both model and states should agree.
+        """
+        fetched_user = self._gitlab.fetch_user(user.uid)
 
         model_user = self._model_state[user.uid]
 
@@ -99,13 +108,17 @@ class GitlabStateful(RuleBasedStateMachine):
 
     @rule(user=users())
     def get_non_existing_user(self, user: User):
-        fetched_user = self._shim.fetch_user(user.uid)
+        """Test fetching an non-existing user, should return None.
+        """
+        fetched_user = self._gitlab.fetch_user(user.uid)
         assert fetched_user is None
 
     @rule(user=consumes(created_users))
     def delete_user(self, user: User):
-        self._shim.delete_user(user.uid)
+        """Test deleting an existing user. Consumes user from the created users bundle.
+        """
+        self._gitlab.delete_user(user.uid)
         self._model_state.pop(user.uid)
 
 
-TestGitlabShim = GitlabStateful.TestCase
+TestGitlabStateful = GitlabStateful.TestCase
