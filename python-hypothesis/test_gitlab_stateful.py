@@ -65,7 +65,6 @@ def expect_exception(expected_exception_cls):
 class GitlabStateful(RuleBasedStateMachine):
     def __init__(self):
         super().__init__()
-        self._model_state = {}
 
         self._gitlab = GitlabAPI()
         self._gitlab.prepare()
@@ -81,9 +80,6 @@ class GitlabStateful(RuleBasedStateMachine):
 
         # Perform operation on real system
         self._gitlab.create_user(user)
-
-        # Update model state (`next_state`)
-        self._model_state.update(**{user.uid: user})
 
         # Return value store it into bundle
         return user
@@ -101,10 +97,7 @@ class GitlabStateful(RuleBasedStateMachine):
         """Test fetching an existing user, as post-condition both model and states should agree.
         """
         fetched_user = self._gitlab.fetch_user(user.uid)
-
-        model_user = self._model_state[user.uid]
-
-        assert fetched_user == model_user
+        assert fetched_user == user
 
     @rule(user=users())
     def get_non_existing_user(self, user: User):
@@ -118,7 +111,6 @@ class GitlabStateful(RuleBasedStateMachine):
         """Test deleting an existing user. Consumes user from the created users bundle.
         """
         self._gitlab.delete_user(user.uid)
-        self._model_state.pop(user.uid)
 
 
 TestGitlabStateful = GitlabStateful.TestCase
