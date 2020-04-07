@@ -1,11 +1,11 @@
--module(prop_foundations).
+-module(prop_base).
 
 -include_lib("proper/include/proper.hrl").
 
 %%%%%%%%%%%%%%%%%%
 %%% Properties %%%
 %%%%%%%%%%%%%%%%%%
-prop_test() ->
+prop_biggest() ->
     ?FORALL(Type, (term()), begin boolean(Type) end).
 
 %%%%%%%%%%%%%%%
