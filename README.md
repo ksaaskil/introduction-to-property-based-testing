@@ -45,29 +45,29 @@ Some notes below for preparing to demo targeted PBT.
 - Method for finding the global minimum of a function `E(s)` with respect to `s`
 - Algorithm:
 
-  0. Choose initial temperature `T`, initial state `s` and compute `e=E(s)`
+  0. Choose initial temperature `T=T_0`, initial state `s=s_0` and compute `e=E(s)`
   1. Generate a candidate ("neighbor") `s'` and compute `e'=E(s')`
   2. With acceptance probability `P(e, e', T)`, move to new state by assigning `s=s'`, `e=e'`
-  3. If done, exit. Otherwise, update `T` and move to 1.
+  3. If done, exit. Otherwise, update `T` according to annealing schedule and move to 1.
 
 - Acceptance probability function `P(e, e', T)` depends on "temperature" `T`
-  - When T tends to zero, acceptance probability tends to zero if `e' > e`
-  - Large `T`: Transitions to worse states (`e' > e`) are likely
-  - Small `T`: Transitions to worse states are unlikely
-  - `T=0`: Transitions allowed only to smaller energy states ("greedy" algorithm)
-  - Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp(-(e'-e) / T)`
-- Algorithm starts with high value of `T` and then decreases `T` according to _annealing schedule_
-- Recap of required parameters:
+  - In the beginning of the search, `T` is large
+  - As search progresses, `T -> 0` according to _annealing schedule_
+  - `T` large: Transitions to higher-energy states (`e' > e`) are likely
+  - `T` small: Transitions to higher-energy states are unlikely
+  - `T = 0`: Transitions allowed only to smaller-energy states ("greedy" algorithm)
+  - Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp[-(e'-e) / T]`
+- Recap of requirements:
   - State space `S` and the energy (target) function `E: S -> float`
   - Candidate generator function `neighbor()`
   - Acceptance probability function `P(e, e', T)`
   - Annealing schedule
-- Efficient candidate generation requires that you don't "hop around" like crazy: rather make smallish movements
+  - Initial guess `s_0` and initial temperature `T_0`
+- Efficient candidate generation requires that you don't "hop around" to random states like crazy: rather try moves to states with similar energy
   - Similar to Metropolis-Hastings
-  - ...but be careful of being trapped in a local minimum
-- Also restarts may help if trapped in a bad environment
-  - Keep track of best energy and state so far
-- Resources:
+  - Be careful of local minima
+  - Also occasional restarts may help if trapped in a bad environment
+- Resources
   - [Wikipedia](ttps://en.wikipedia.org/wiki/Simulated_annealing)
 
 ### Custom neighbor functions

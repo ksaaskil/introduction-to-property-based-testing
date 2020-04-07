@@ -30,3 +30,7 @@ Enter test shell:
     {ok, 432}
     4> proper_gen:pick({proper_types:bool(), proper_types:float()}).
     {ok,{true,-12.782946695312658}}
+
+Run a single property:
+
+    $ rebar3 proper -p prop_path
