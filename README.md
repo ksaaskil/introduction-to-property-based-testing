@@ -73,3 +73,9 @@ Some notes below for preparing to demo targeted PBT.
 ### Custom neighbor functions
 
 ### More variations
+
+### Limitations
+
+- No recursive generators
+- No gathering metrics
+- No stateful testing
