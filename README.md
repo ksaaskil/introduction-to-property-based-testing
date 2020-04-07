@@ -25,3 +25,11 @@ Examples of property-based testing using the [`Hypothesis`](https://hypothesis.r
 
 - [`python-hypothesis/test_hypothesis.py`](./python-hypothesis/test_hypothesis.py): Examples from Hypothesis documentation
 - [`python-hypothesis/test_gitlab_stateful.py`](./python-hypothesis/test_gitlab_stateful.py): Stateful property-based testing for GitLab-like API
+
+## [`erlang-targeted-pbt`](./erlang-targeted-pbt)
+
+Examples of targeted property-based testing in [Erlang](https://www.erlang.org/). Project initialized with [rebar3](https://www.rebar3.org/):
+
+```bash
+$ rebar3 new lib erlang-targeted-pbt
+```
