@@ -16,33 +16,36 @@ prop_path() ->
         begin
             {X, Y} = lists:foldl(fun move/2, {0, 0}, P),
             % What we're minimizing
-            LOSS = Y - X,
-            io:format("Ended at: ~p, length of path: ~w, loss: ~w\n", [{X, Y}, length(P), LOSS]),
+            Loss = Y - X,
+            io:format("Ended at: ~p, length of path: ~w, loss: ~w\n", [{X, Y}, length(P), Loss]),
             % Give feedback to PropEr: Move to lower right, maximizing X and minimizing Y
-            ?MAXIMIZE(-LOSS),
+            ?MAXIMIZE(-Loss),
             true
         end).
 
-prop_tree_regular(opts) -> [{numtests, 100}].
+prop_tree_regular(opts) -> [{search_steps, 500}].
 prop_tree_regular() ->
     ?FORALL_TARGETED(T, tree(),
         begin
             {Left, Right} = Weight = sides(T),
-            io:format(" ~p", [Weight]),
-            ?MAXIMIZE(Left-Right),
+            NegLoss = Left - Right,
+            io:format("Tree weight: ~p, negative loss: ~w~n", [Weight, NegLoss]),
+            % io:format(" ~p", [Weight]),
+            ?MAXIMIZE(NegLoss),
             true
         end).
 
 % With custom neighbor functions, one can guide the search
 % USER_NF macro takes a generator and an anonymous function taking current data
 % and tuple with temperature and depth (next_tree) below.
-prop_tree_neighbor(opts) -> [{numtests, 100}].
+prop_tree_neighbor(opts) -> [{search_steps, 500}].
 prop_tree_neighbor() ->
     ?FORALL_TARGETED(T, ?USERNF(tree(), next_tree()),
         begin
             {Left, Right} = Weight = sides(T),
-            io:format(" ~p", [Weight]),
-            ?MAXIMIZE(Left-Right),
+            NegLoss = Left - Right,
+            io:format("Tree weight: ~p, negative loss: ~w~n", [Weight, NegLoss]),
+            ?MAXIMIZE(NegLoss),
             true
         end).
 
