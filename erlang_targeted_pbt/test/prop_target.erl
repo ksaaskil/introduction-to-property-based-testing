@@ -49,6 +49,27 @@ prop_tree_neighbor() ->
             true
         end).
 
+% When custom neighbor functions, the whole search consists of
+% variations of the initial data. To get more variation, it may be
+% preferable to combine FORALL and NOT_EXISTS macros as follows:
+prop_tree_search(opts) -> [{numtests, 10}, {search_steps, 10}].
+prop_tree_search() ->
+    ?FORALL(L, list(integer()),
+        ?NOT_EXISTS(T,
+            ?USERNF(
+                ?LET(X, L, to_tree(X)),  % Generator of tree from the drawn list
+                next_tree()  % Neighbor function
+            ),
+            begin
+                {Left, Right} = Weight = sides(T),
+                NegLoss = Left - Right,
+                io:format("Tree weight: ~p, negative loss: ~w~n", [Weight, NegLoss]),
+                ?MAXIMIZE(NegLoss),
+                false
+            end)
+        ).
+
+
 %%%%%%%%%%%%%%%
 %%% Helpers %%%
 %%%%%%%%%%%%%%%
