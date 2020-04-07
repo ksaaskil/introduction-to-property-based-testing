@@ -21,4 +21,7 @@ Example of stateful property-based testing from [PropEr testing book](https://pr
 
 ## [`python-hypothesis`](./python-hypothesis)
 
-Examples of property-based testing copied from [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library.
+Examples of property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
+
+- [`python-hypothesis/test_hypothesis.py`](./python-hypothesis/test_hypothesis.py): Examples from Hypothesis documentation
+- [`python-hypothesis/test_gitlab_stateful.py`](./python-hypothesis/test_gitlab_stateful.py): Stateful property-based testing for GitLab-like API

@@ -1,5 +1,10 @@
 # Examples of PBT with [`hypothesis`](https://hypothesis.readthedocs.io/)
 
+Examples of property-based testing using the [`Hypothesis`](https://hypothesis.readthedocs.io/en/latest/) library:
+
+- [`test_hypothesis.py`](./test_hypothesis.py): Examples from Hypothesis documentation
+- [`test_gitlab_stateful.py`](./test_gitlab_stateful.py): Stateful property-based testing for GitLab-like API
+
 ## Instructions
 
 ```bash
