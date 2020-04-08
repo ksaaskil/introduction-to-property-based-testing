@@ -38,6 +38,44 @@ $ rebar3 new lib erlang-targeted-pbt
 
 Some notes below for preparing to demo targeted PBT.
 
+### Problem setup
+
+- **Search space** `S`
+- **Target function** `E: S -> R`
+  - Mapping from search space to real numbers
+  - Also known as **energy** or **utility** function
+- **Task**: Minimize `E`
+  - Equivalent to maximizing `-E`
+
+### Examples of search space `S`
+
+- All lists of integers with length below 1000
+- All valid `User` objects with given ID
+- All HTTP requests accepted by a server
+
+### Examples of target function `E`
+
+- Execution time
+
+  - `S` = All lists of integers with length below 1000
+  - `E` = Time to sort the list
+
+- Response time
+  - `S` = All HTTP requests accepted by the server
+  - `E` = Server response time
+
+### Targeted property-based testing
+
+- [Targeted property-based testing](http://proper.softlab.ntua.gr/papers/issta2017.pdf), A. Löscher and K. Sagonas, 2017.
+  > "We introduce targeted property-based testing, an enhanced form of property-based testing that aims to make the input generation component of a property-based testing tool guided by a search strategy rather than being completely random"
+- [Automating targeted property-based testing](https://proper-testing.github.io/papers/icst2018.pdf), A. Löscher and K. Sagonas, 2018.
+  > "To use [targeted PBT], however, the user currently needs to specify a search strategy and also supply all ingredients that the search strategy requires. ...[In this paper], we focus on simulated annealing, the default search strategy of our tool, and present a technique that automatically creates all the ingredients that targeted PBT requires starting from only a random generator."
+- [Targeted property-based testing with Applications in Sensor Networks](http://uu.diva-portal.org/smash/record.jsf?pid=diva2%3A1195475&dswid=7548), A. Löscher's PhD thesis, 2018.
+
+- Andreas Löscher:
+  - [Google Scholar](https://scholar.google.se/citations?user=E4LXtaEAAAAJ&hl=sv)
+  - [LinkedIn](https://www.linkedin.com/in/andreas-loscher/)
+
 ### Example: maximize sort time
 
 ### [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
