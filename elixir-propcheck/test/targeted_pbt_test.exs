@@ -19,14 +19,7 @@ defmodule TargetedPbtTest do
     end
   end
 
-  def sort([]), do: []
-
-  def sort([head, tail]) do
-    sort(for x <- tail, x < head, do: x) ++
-      [head] ++
-      sort(for x <- tail, x >= head, do: x)
-  end
-
+  # Helpers
   def move(:left, {x, y}), do: {x - 1, y}
   def move(:right, {x, y}), do: {x + 1, y}
   def move(:up, {x, y}), do: {x, y + 1}

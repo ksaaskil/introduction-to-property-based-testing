@@ -105,6 +105,12 @@ Some notes below for preparing to demo targeted PBT.
 
 ### Motivating example: maximize sort time
 
+### How does it work?
+
+- Simulated annealing as optimization algorithm
+  - Non-greedy: probabilistic algorithm that may trade short-term rewards for long-term benefits
+  - Originates from physics
+
 ### [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
 
 - Method for finding the global minimum of a function `E(s)` with respect to `s`
