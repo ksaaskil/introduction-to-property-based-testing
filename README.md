@@ -80,10 +80,17 @@ Also:
 ### What you lose in targeted PBT
 
 - Complex data generators (recursive)
-- Gathering metrics
-- Stateful testing
-- Shrinking
+- Stateful tests
+- Generator metrics
+- Shrinking (at least partially)
 - Variations in data
+
+### What you gain
+
+- Generates data made for the problem at hand
+- Can generate data not found with traditional generators
+- Can replace complex generators
+  - Simplifies generating, for example, unbalanced trees
 
 ### "Who's a good boy" a.k.a. how to give treats to generators
 
@@ -93,7 +100,7 @@ Also:
   - Generator produces data leading to smaller values -> no reward
 - Be careful of local optima
   - Short-term vs. long-term rewards
-  - Non-greedy algorithms
+    -> Non-greedy algorithms
 
 ### Generic problem setup
 
@@ -250,5 +257,23 @@ Answer: `l` is random but fixed, equal to the first randomly drawn list.
 
 ### More variations
 
-- With custom neighbor functions, basically all generated data is a variation of the first drawn value
-- You can get more variation by wrapping
+- With custom neighbor functions, all generated data is a variation of the first drawn value
+- You can get more variation by wrapping targeted search in a `forall` block
+- Test below executes the `forall` block five times and searches for 10 steps for each block
+
+```elixir
+property "targeted path generation with variation", search_steps: 10, numtests: 5 do
+  forall p <- path() do
+    # Trick to make a generator from value
+    p_gen = let(p_ <- p, do: p_)
+
+    forall_targeted p2 <- user_nf(p_gen, path_next()) do
+      {x, y} = List.foldl(p2, {0, 0}, fn v, acc -> move(v, acc) end)
+      neg_loss = x - y
+      IO.puts("Last point: {#{x}, #{y}}, negative loss: #{neg_loss}")
+      maximize(neg_loss)
+      true
+    end
+  end
+end
+```
