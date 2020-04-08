@@ -11,7 +11,9 @@ defmodule TargetedPbtUsernfTest do
   # steps right and down in the previous path.
   # All paths are variations of the first path drawn from the path() generator.
   def path_next() do
-    fn prev_path, _temperature ->
+    fn prev_path, {_depth, _temperature} ->
+      # IO.puts("Temperature #{temperature}")
+
       let(
         next_steps <- list(oneof([:right, :down])),
         do: prev_path ++ next_steps
@@ -34,7 +36,7 @@ defmodule TargetedPbtUsernfTest do
   # User-defined neighbor function that always
   # returns the same data
   def path_next_fixed() do
-    fn _prev_path, _temperature ->
+    fn _prev_path,, {_depth, _temperature} ->
       [:right]
     end
   end
@@ -55,7 +57,7 @@ defmodule TargetedPbtUsernfTest do
   # User-defined neighbor function that always
   # returns the same data
   def path_next_fixed() do
-    fn prev_path, _temperature ->
+    fn prev_path, , {_depth, _temperature} ->
       prev_path
     end
   end

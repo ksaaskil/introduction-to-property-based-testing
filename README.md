@@ -192,20 +192,20 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
 
 ### Candidate generation in targeted PBT
 
-- Customizable via custom neighbor function (`?USER_NF`)
+- Customizable via custom neighbor function (`user_nf` in `propcheck`)
 - Instead of letting framework decide which neighbors to try, you can define your own neighbor function
-- Neighbor function takes the previous data point and temperature and returns the next value to try
+- Neighbor function takes the previous data point and a tuple of current depth and temperature and returns the next value to try
 
 ```elixir
-  # Always add steps right and down at the end of drawn path
-  def path_next() do
-    fn prev_path, _temperature ->
-      let(
-        next_steps <- list(oneof([:right, :down])),
-        do: prev_path ++ next_steps
-      )
-    end
+# Always add steps right and down at the end of drawn path
+def path_next() do
+  fn prev_path, , {_depth, _temperature} ->
+    let(
+      next_steps <- list(oneof([:right, :down])),
+      do: prev_path ++ next_steps
+    )
   end
+end
 ```
 
 ### Quiz 1
@@ -214,7 +214,7 @@ What are the values of `l` in the following case?
 
 ```elixir
 def list_next() do
-  fn _prev_list, _temperature ->
+  fn _prev_list, , {_depth, _temperature} ->
     [1, 2, 3]
   end
 end
@@ -234,7 +234,7 @@ What's the generated data like in the following case?
 
 ```elixir
 def list_next() do
-  fn prev_list, _temperature ->
+  fn prev_list, , {_depth, _temperature} ->
     prev_list
   end
 end
