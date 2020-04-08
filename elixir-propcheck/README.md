@@ -1,6 +1,15 @@
-# Pbt
+# Property-based testing with [`PropCheck`](https://hexdocs.pm/propcheck/PropCheck.html)
 
-Example of property-based tests in Elixir.
+Examples of property-based tests in Elixir. Many of the examples come from [Property-Based Testing with PropEr, Erlang, and Elixir](https://propertesting.com/) book.
+
+## What's in the repo
+
+### Targeted PBT examples
+
+- [`test/tpbt_test.exs`](./test/tpbt_test.exs): Example of targeted path generation
+- [`test/tpbt_quicksort_test.exs`](./test/tpbt_quicksort_test.exs): Find pathological lists for naive quicksort implementation
+- [`test/tpbt_usernf_test.exs`](./test/tpbt_usernf_test.exs): Example of custom neighbor functions in targeted PBT
+- [`test/tpbt_variations_test.exs`](./test/tpbt_variations_test.exs): Wrapping targeted PBT in a `forall` for more varying data
 
 ## Instructions
 

@@ -13,7 +13,6 @@ $ mix new elixir-propcheck --app pbt
 ```
 
 `mix` is installed with [Elixir](https://elixir-lang.org/install.html).
-)
 
 ## [`bookstore`](./bookstore)
 
