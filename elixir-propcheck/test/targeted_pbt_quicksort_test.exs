@@ -3,13 +3,15 @@ defmodule TargetedPbtQuickSortTest do
   use PropCheck, default_opts: [numtests: 100, search_steps: 1000]
   doctest Pbt
 
+  # Test quicksort with regular properties
+  # This passes as all generated lists are (a) short and (b) nice
   property "regular quick sort", [:verbose] do
     lists = list(integer())
     short_lists = such_that(l <- lists, when: length(l) < 10000)
 
     forall l <- short_lists do
       t0 = :erlang.monotonic_time(:millisecond)
-      sort(l)
+      quick_sort(l)
       t1 = :erlang.monotonic_time(:millisecond)
       spent = t1 - t0
       collect(spent < 5, to_range(10, spent))
@@ -22,7 +24,7 @@ defmodule TargetedPbtQuickSortTest do
 
     forall_targeted l <- short_lists do
       t0 = :erlang.monotonic_time(:millisecond)
-      sort(l)
+      quick_sort(l)
       t1 = :erlang.monotonic_time(:millisecond)
       spent = t1 - t0
       maximize(spent)
@@ -36,11 +38,11 @@ defmodule TargetedPbtQuickSortTest do
   end
 
   # Functions under test
-  def sort([]), do: []
+  def quick_sort([]), do: []
 
-  def sort([head | tail]) do
-    sort(for x <- tail, x < head, do: x) ++
+  def quick_sort([head | tail]) do
+    quick_sort(for x <- tail, x < head, do: x) ++
       [head] ++
-      sort(for x <- tail, x >= head, do: x)
+      quick_sort(for x <- tail, x >= head, do: x)
   end
 end

@@ -105,6 +105,24 @@ Some notes below for preparing to demo targeted PBT.
 
 ### Motivating example: maximize sort time
 
+This property searches for input data that maximizes the execution time and it indeed fails, finding examples of lists that take more than a second to sort.
+
+```elixir
+property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
+    lists = list(integer())
+    short_lists = such_that(l <- lists, when: length(l) < 100_000)
+
+    forall_targeted l <- short_lists do
+      t0 = :erlang.monotonic_time(:millisecond)
+      quick_sort(l)
+      t1 = :erlang.monotonic_time(:millisecond)
+      spent = t1 - t0
+      maximize(spent)
+      spent < 1000
+    end
+  end
+```
+
 ### How does it work?
 
 - Simulated annealing as optimization algorithm
