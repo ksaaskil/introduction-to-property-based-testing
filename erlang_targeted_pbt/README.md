@@ -1,4 +1,6 @@
-# erlang_targeted_pbt
+# Targeted PBT in Erlang
+
+Many of the examples here come from [Property-Based Testing with PropEr, Erlang, and Elixir](https://propertesting.com/) book.
 
 ## Instructions
 

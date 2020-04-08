@@ -35,7 +35,7 @@ $ rebar3 new lib erlang-targeted-pbt
 
 ## Targeted property-based testing
 
-Some notes below for preparing to demo targeted PBT.
+Some notes below for preparing to demo targeted PBT. More complete examples in Elixir can be found in [./elixir-propcheck/test](https://github.com/ksaaskil/introduction-to-property-based-testing/tree/master/elixir-propcheck/test).
 
 ### Targeted property-based testing
 
