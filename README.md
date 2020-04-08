@@ -38,7 +38,46 @@ $ rebar3 new lib erlang-targeted-pbt
 
 Some notes below for preparing to demo targeted PBT.
 
-### Problem setup
+### Targeted property-based testing
+
+- [Targeted property-based testing](http://proper.softlab.ntua.gr/papers/issta2017.pdf), A. Löscher and K. Sagonas, 2017.
+  > "We introduce targeted property-based testing, an enhanced form of property-based testing that aims to make the **input generation** component of a property-based testing tool **guided by a search strategy** rather than being completely random"
+- [Automating targeted property-based testing](https://proper-testing.github.io/papers/icst2018.pdf), A. Löscher and K. Sagonas, 2018.
+  > "To use [targeted PBT], however, the user currently needs to specify a search strategy and also supply all ingredients that the search strategy requires. - [In this paper], we focus on **simulated annealing**, the default search strategy of our tool, and present a technique that **automatically creates all the ingredients** that targeted PBT requires **starting from only a random generator.**"
+- [Targeted property-based testing with Applications in Sensor Networks](http://uu.diva-portal.org/smash/record.jsf?pid=diva2%3A1195475&dswid=7548), A. Löscher's PhD thesis, 2018.
+
+  > "This dissertation presents targeted property-based testing, an enhanced form of PBT where the input generation is guided by a search strategy instead of being random, thereby combining the strengths of QuickCheck-like and search-based testing techniques. It furthermore presents an automation for the simulated annealing search strategy that reduces the manual task of using targeted PBT."
+
+- Andreas Löscher:
+
+  - [Google Scholar](https://scholar.google.se/citations?user=E4LXtaEAAAAJ&hl=sv)
+  - [LinkedIn](https://www.linkedin.com/in/andreas-loscher/)
+
+- Konstantinos Sagonas:
+  - [Google Scholar](https://scholar.google.com/citations?hl=en&user=ijCSV_wAAAAJ&view_op=list_works&sortby=pubdate)
+  - [Fascinating papers on PropEr](https://github.com/proper-testing/proper-testing.github.io/blob/master/publications.md)
+
+### What is targeted PBT?
+
+- PBT relies on **generators**, functions producing data from given search space
+  - Typically sample **a small part of the full search space**
+  - Unguided: **no feedback to generator** if our samples are good or bad
+- Targeted PBT: **Give feedback to the generator**
+  - **Couples test execution to data generation**
+  - "This is more like it, well done!"
+  - "This is not a good sample, please try again."
+
+### "Who's a good boy" a.k.a. how to give treats to generators
+
+- Formulated as an optimization problem
+  - Task is to maximize a given function
+  - Generator produces data leading to larger values -> reward
+  - Generator produces data leading to smaller values -> no reward
+- Be careful of local optima
+  - Short-term vs. long-term rewards
+  - Non-greedy algorithms
+
+### Generic problem setup
 
 - **Search space** `S`
 - **Target function** `E: S -> R`
@@ -58,25 +97,13 @@ Some notes below for preparing to demo targeted PBT.
 - Execution time
 
   - `S` = All lists of integers with length below 1000
-  - `E` = Time to sort the list
+  - `E` = (Negative) time to sort the list
 
 - Response time
   - `S` = All HTTP requests accepted by the server
-  - `E` = Server response time
+  - `E` = (Negative) server response time
 
-### Targeted property-based testing
-
-- [Targeted property-based testing](http://proper.softlab.ntua.gr/papers/issta2017.pdf), A. Löscher and K. Sagonas, 2017.
-  > "We introduce targeted property-based testing, an enhanced form of property-based testing that aims to make the input generation component of a property-based testing tool guided by a search strategy rather than being completely random"
-- [Automating targeted property-based testing](https://proper-testing.github.io/papers/icst2018.pdf), A. Löscher and K. Sagonas, 2018.
-  > "To use [targeted PBT], however, the user currently needs to specify a search strategy and also supply all ingredients that the search strategy requires. ...[In this paper], we focus on simulated annealing, the default search strategy of our tool, and present a technique that automatically creates all the ingredients that targeted PBT requires starting from only a random generator."
-- [Targeted property-based testing with Applications in Sensor Networks](http://uu.diva-portal.org/smash/record.jsf?pid=diva2%3A1195475&dswid=7548), A. Löscher's PhD thesis, 2018.
-
-- Andreas Löscher:
-  - [Google Scholar](https://scholar.google.se/citations?user=E4LXtaEAAAAJ&hl=sv)
-  - [LinkedIn](https://www.linkedin.com/in/andreas-loscher/)
-
-### Example: maximize sort time
+### Motivating example: maximize sort time
 
 ### [Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
 
@@ -96,7 +123,6 @@ Some notes below for preparing to demo targeted PBT.
   - `T = 0`: Transitions allowed only to smaller-energy states ("greedy" algorithm)
   - Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp[-(e'-e) / T]`
 - Recap of requirements:
-  - State space `S` and the energy (target) function `E: S -> float`
   - Candidate generator function `neighbor()`
   - Acceptance probability function `P(e, e', T)`
   - Annealing schedule
@@ -112,8 +138,10 @@ Some notes below for preparing to demo targeted PBT.
 
 ### More variations
 
-### Limitations
+### What you lose
 
-- No recursive generators
-- No gathering metrics
-- No stateful testing
+- Complex data generators (recursive)
+- Gathering metrics
+- Stateful testing
+- Shrinking
+- Variations in data
