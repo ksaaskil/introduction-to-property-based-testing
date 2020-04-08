@@ -4,7 +4,10 @@ defmodule TargetedPbtQuickSortTest do
   doctest Pbt
 
   property "regular quick sort", [:verbose] do
-    forall l <- lists() do
+    lists = list(integer())
+    short_lists = such_that(l <- lists, when: length(l) < 10000)
+
+    forall l <- short_lists do
       t0 = :erlang.monotonic_time(:millisecond)
       sort(l)
       t1 = :erlang.monotonic_time(:millisecond)
@@ -13,20 +16,18 @@ defmodule TargetedPbtQuickSortTest do
     end
   end
 
-  property "targeted quick sort", [:verbose, :noshrink] do
-    forall_targeted l <- such_that(l <- list(integer()), when: length(l) < 10000) do
+  property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
+    lists = list(integer())
+    short_lists = such_that(l <- lists, when: length(l) < 100_000)
+
+    forall_targeted l <- short_lists do
       t0 = :erlang.monotonic_time(:millisecond)
       sort(l)
       t1 = :erlang.monotonic_time(:millisecond)
       spent = t1 - t0
       maximize(spent)
-      spent < 50
+      spent < 1000
     end
-  end
-
-  def lists() do
-    gen = list(integer())
-    such_that(l <- gen, when: length(l) < 10000)
   end
 
   def to_range(m, n) do
