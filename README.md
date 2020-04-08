@@ -57,6 +57,16 @@ Some notes below for preparing to demo targeted PBT.
   - [Google Scholar](https://scholar.google.com/citations?hl=en&user=ijCSV_wAAAAJ&view_op=list_works&sortby=pubdate)
   - [Fascinating papers on PropEr](https://github.com/proper-testing/proper-testing.github.io/blob/master/publications.md)
 
+### Implementations
+
+- [Proper](https://proper-testing.github.io/apidocs/): `?FORALL_TARGETED`
+- [`PropCheck.TargetedPBT`](https://hexdocs.pm/propcheck/PropCheck.TargetedPBT.html#content)
+- [`hypothesis.target`](https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation)
+
+Also:
+
+- [`QuickTheories`](https://github.com/quicktheories/QuickTheories) has targeted search for coverage
+
 ### What is targeted PBT?
 
 - PBT relies on **generators**, functions producing data from given search space
@@ -66,6 +76,14 @@ Some notes below for preparing to demo targeted PBT.
   - **Couples test execution to data generation**
   - "This is more like it, well done!"
   - "This is not a good sample, please try again."
+
+### What you lose in targeted PBT
+
+- Complex data generators (recursive)
+- Gathering metrics
+- Stateful testing
+- Shrinking
+- Variations in data
 
 ### "Who's a good boy" a.k.a. how to give treats to generators
 
@@ -91,6 +109,13 @@ Some notes below for preparing to demo targeted PBT.
 - All lists of integers with length below 1000
 - All valid `User` objects with given ID
 - All HTTP requests accepted by a server
+
+Examples from [Hypothesis documentation](https://hypothesis.readthedocs.io/en/latest/details.html#targeted-example-generation):
+
+- Number of elements in a collection, or tasks in a queue
+- Mean or maximum runtime of a task (or both, if you use `label`)
+- Compression ratio for data (perhaps per-algorithm or per-level)
+- Number of steps taken by a state machine
 
 ### Examples of target function `E`
 
@@ -139,33 +164,91 @@ property "targeted quick sort", [:verbose, :noshrink, search_steps: 500] do
   2. With acceptance probability `P(e, e', T)`, move to new state by assigning `s=s'`, `e=e'`
   3. If done, exit. Otherwise, update `T` according to annealing schedule and move to 1.
 
-- Acceptance probability function `P(e, e', T)` depends on "temperature" `T`
-  - In the beginning of the search, `T` is large
-  - As search progresses, `T -> 0` according to _annealing schedule_
-  - `T` large: Transitions to higher-energy states (`e' > e`) are likely
-  - `T` small: Transitions to higher-energy states are unlikely
-  - `T = 0`: Transitions allowed only to smaller-energy states ("greedy" algorithm)
-  - Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp[-(e'-e) / T]`
-- Recap of requirements:
+### Acceptance probability `P(e, e', T)`
+
+- Depends on "temperature" `T`
+- In the beginning of the search, `T` is large
+- As search progresses, `T -> 0` according to _annealing schedule_
+- `T` large: Transitions to higher-energy states (`e' > e`) are likely
+- `T` small: Transitions to higher-energy states are unlikely
+- `T = 0`: Transitions allowed only to smaller-energy states ("greedy" algorithm)
+- Example: `P(e, e', T) = 1` if `e' < e`, otherwise `P(e, e', T) = exp[-(e'-e) / T]`
+
+### Recap of simulated annealing
+
+- Probabilistic, iterative algorithm to minimize given target function
+- Requires
   - Candidate generator function `neighbor()`
   - Acceptance probability function `P(e, e', T)`
   - Annealing schedule
   - Initial guess `s_0` and initial temperature `T_0`
+
+### Candidate generation
+
 - Efficient candidate generation requires that you don't "hop around" to random states like crazy: rather try moves to states with similar energy
-  - Similar to Metropolis-Hastings
+  - Similar to [Metropolis-Hastings](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
   - Be careful of local minima
   - Also occasional restarts may help if trapped in a bad environment
-- Resources
-  - [Wikipedia](ttps://en.wikipedia.org/wiki/Simulated_annealing)
 
-### Custom neighbor functions
+### Candidate generation in targeted PBT
+
+- Customizable via custom neighbor function (`?USER_NF`)
+- Instead of letting framework decide which neighbors to try, you can define your own neighbor function
+- Neighbor function takes the previous data point and temperature and returns the next value to try
+
+```elixir
+  # Always add steps right and down at the end of drawn path
+  def path_next() do
+    fn prev_path, _temperature ->
+      let(
+        next_steps <- list(oneof([:right, :down])),
+        do: prev_path ++ next_steps
+      )
+    end
+  end
+```
+
+### Quiz 1
+
+What are the values of `l` in the following case?
+
+```elixir
+def list_next() do
+  fn _prev_list, _temperature ->
+    [1, 2, 3]
+  end
+end
+
+property "targeted list generation" do
+  forall_targeted l <- user_nf(list(integer()), list_next()) do
+    ...
+  end
+end
+```
+
+Answer: `l` is always `[1, 2, 3]`.
+
+### Quiz 2
+
+What's the generated data like in the following case?
+
+```elixir
+def list_next() do
+  fn prev_list, _temperature ->
+    prev_list
+  end
+end
+
+property "targeted list generation" do
+  forall_targeted l <- user_nf(list(integer()), list_next()) do
+    ...
+  end
+end
+```
+
+Answer: `l` is random but fixed, equal to the first randomly drawn list.
 
 ### More variations
 
-### What you lose
-
-- Complex data generators (recursive)
-- Gathering metrics
-- Stateful testing
-- Shrinking
-- Variations in data
+- With custom neighbor functions, basically all generated data is a variation of the first drawn value
+- You can get more variation by wrapping
