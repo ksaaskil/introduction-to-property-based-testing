@@ -4,7 +4,7 @@ See the slides at [https://ksaaskil.github.io/introduction-to-property-based-tes
 
 ## [`elixir-propcheck`](./elixir-propcheck)
 
-Examples in [Elixir](https://elixir-lang.org/) reside in [elixir-propcheck/](./elixir-propheck) folder.
+Examples of property-based testing including targeted property-based testing written in [Elixir](https://elixir-lang.org/) with [PropCheck](https://github.com/alfert/propcheck).
 
 The project was initialized using [`mix`](https://elixir-lang.org/getting-started/mix-otp/introduction-to-mix.html):
 
@@ -12,7 +12,7 @@ The project was initialized using [`mix`](https://elixir-lang.org/getting-starte
 $ mix new elixir-propcheck --app pbt
 ```
 
-`mix` is installed with [Elixir](https://elixir-lang.org/install.html).
+`mix` comes with [Elixir](https://elixir-lang.org/install.html).
 
 ## [`bookstore`](./bookstore)
 
